@@ -24,7 +24,7 @@ def group_posts(request, slug):
     return render(request,
                   'posts/group_list.html',
                   {'group': group, 'page_obj': page_obj}
-                )
+            )
 
 
 def profile(request, username):
@@ -39,10 +39,12 @@ def profile(request, username):
     page_obj = paginator(request, post_list)
     return render(request,
                   'posts/profile.html',
-                  {'author': author,
+                  {
+                  'author': author,
                   'page_obj': page_obj,
-                  'following': following}
-                )
+                  'following': following
+                  }
+            )
 
 
 def post_detail(request, post_id):
@@ -55,11 +57,13 @@ def post_detail(request, post_id):
     comments = post.comments.all()
     return render(request,
                   'posts/post_detail.html',
-                  {'post_count': post_list,
-                   'post': post,
-                   'form': form,
-                   'comments': comments}
-                )
+                  {
+                  'post_count': post_list,
+                  'post': post,
+                  'form': form,
+                  'comments': comments
+                  }
+            )
 
 
 @login_required
@@ -94,10 +98,12 @@ def post_edit(request, post_id):
         return redirect('posts:post_detail', post_id=post_id)
     return render(request,
                   'posts/create_post.html',
-                  {'form': form,
+                  {
+                  'form': form,
                   'post': post,
-                  'is_edit': True}
-                )
+                  'is_edit': True
+                  }
+            )
 
 
 @login_required
@@ -122,9 +128,11 @@ def follow_index(request):
     page_obj = paginator(request, post_list)
     return render(request,
                   'posts/follow.html',
-                  {'title': title,
-                  'page_obj': page_obj}
-                )
+                  {
+                  'title': title,
+                  'page_obj': page_obj
+                  }
+            )
 
 
 @login_required
