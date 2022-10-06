@@ -21,10 +21,11 @@ def group_posts(request, slug):
                  .filter(group=group)
                  .prefetch_related())
     page_obj = paginator(request, post_list)
-    return render(request,
-                  'posts/group_list.html',
-                  {'group': group, 'page_obj': page_obj}
-            )
+    return render(
+        request,
+        'posts/group_list.html',
+        {'group': group, 'page_obj': page_obj}
+    )
 
 
 def profile(request, username):
@@ -37,14 +38,11 @@ def profile(request, username):
                  .filter(author=author)
                  .prefetch_related())
     page_obj = paginator(request, post_list)
-    return render(request,
-                  'posts/profile.html',
-                  {
-                  'author': author,
-                  'page_obj': page_obj,
-                  'following': following
-                  }
-            )
+    return render(
+        request,
+        'posts/profile.html',
+        {'author': author, 'page_obj': page_obj, 'following': following}
+        )
 
 
 def post_detail(request, post_id):
@@ -55,15 +53,16 @@ def post_detail(request, post_id):
                  .prefetch_related())
     form = CommentForm(request.POST or None)
     comments = post.comments.all()
-    return render(request,
-                  'posts/post_detail.html',
-                  {
-                  'post_count': post_list,
-                  'post': post,
-                  'form': form,
-                  'comments': comments
-                  }
-            )
+    return render(
+        request,
+        'posts/post_detail.html',
+        {
+        'post_count': post_list,
+        'post': post,
+        'form': form,
+        'comments': comments
+        }
+        )
 
 
 @login_required
@@ -96,14 +95,11 @@ def post_edit(request, post_id):
     if form.is_valid():
         form.save()
         return redirect('posts:post_detail', post_id=post_id)
-    return render(request,
-                  'posts/create_post.html',
-                  {
-                  'form': form,
-                  'post': post,
-                  'is_edit': True
-                  }
-            )
+    return render(
+        request,
+        'posts/create_post.html',
+        {'form': form, 'post': post, 'is_edit': True}
+        )
 
 
 @login_required
@@ -126,13 +122,11 @@ def follow_index(request):
                  .filter(author__following__user=request.user)
                  .prefetch_related())
     page_obj = paginator(request, post_list)
-    return render(request,
-                  'posts/follow.html',
-                  {
-                  'title': title,
-                  'page_obj': page_obj
-                  }
-            )
+    return render(
+        request,
+        'posts/follow.html',
+        {'title': title, 'page_obj': page_obj}
+        )
 
 
 @login_required
