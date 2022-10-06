@@ -42,7 +42,7 @@ def profile(request, username):
         request,
         'posts/profile.html',
         {'author': author, 'page_obj': page_obj, 'following': following}
-        )
+    )
 
 
 def post_detail(request, post_id):
@@ -57,12 +57,12 @@ def post_detail(request, post_id):
         request,
         'posts/post_detail.html',
         {
-        'post_count': post_list,
-        'post': post,
-        'form': form,
-        'comments': comments
+            'post_count': post_list,
+            'post': post,
+            'form': form,
+        '   comments': comments
         }
-        )
+    )
 
 
 @login_required
@@ -99,7 +99,7 @@ def post_edit(request, post_id):
         request,
         'posts/create_post.html',
         {'form': form, 'post': post, 'is_edit': True}
-        )
+    )
 
 
 @login_required
@@ -126,7 +126,7 @@ def follow_index(request):
         request,
         'posts/follow.html',
         {'title': title, 'page_obj': page_obj}
-        )
+    )
 
 
 @login_required
