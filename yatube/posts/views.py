@@ -60,7 +60,7 @@ def post_detail(request, post_id):
             'post_count': post_list,
             'post': post,
             'form': form,
-        '   comments': comments
+            'comments': comments
         }
     )
 
