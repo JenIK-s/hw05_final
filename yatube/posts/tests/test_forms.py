@@ -56,13 +56,13 @@ class PostFormTests(TestCase):
 
     def test_create_post(self):
         post_count = Post.objects.count()
-        post = Post.objects.latest('pk')
-        group = Group.objects.latest('pk')
         form_data = {
             'text': 'Тестовый текст',
             'group': PostFormTests.group.title,
             'image': PostFormTests.post.image
         }
+        post = Post.objects.latest('pk')
+        group = Group.objects.latest('pk')
         response = self.authorized_client.post(
             reverse(
                 'posts:post_create'
@@ -83,12 +83,12 @@ class PostFormTests(TestCase):
 
     def test_edit_post(self):
         post_count = Post.objects.count()
-        post = Post.objects.latest('pk')
-        group = Group.objects.latest('pk')
         form_data = {
             'text': 'Тестовый текст',
             'group': PostFormTests.group.title,
         }
+        post = Post.objects.latest('pk')
+        group = Group.objects.latest('pk')
         response = self.authorized_client.post(
             reverse(
                 'posts:post_edit',
@@ -123,13 +123,12 @@ class PostFormTests(TestCase):
                 kwargs={'post_id': PostFormTests.post.pk}
             )
         )
+        comment = Comment.objects.latest('pk')
         self.assertEqual(Comment.objects.count(), comment_count + 1)
-        self.assertEqual(Comment.objects.latest('pk').text, form_data['text'])
-        self.assertEqual(Comment.objects.latest('pk').post, PostFormTests.post)
+        self.assertEqual(comment.text, form_data['text'])
+        self.assertEqual(comment.post, PostFormTests.post)
         self.assertEqual(
-            Comment.
-            objects.
-            latest('pk').
+            comment.
             author,
             PostFormTests.
             user

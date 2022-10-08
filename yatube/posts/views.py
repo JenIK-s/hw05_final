@@ -19,7 +19,7 @@ def group_posts(request, slug):
     post_list = (Post
                  .objects
                  .filter(group=group)
-                 .prefetch_related())
+                 .prefetch_related('group'))
     page_obj = paginator(request, post_list)
     return render(
         request,
@@ -36,7 +36,7 @@ def profile(request, username):
     post_list = (Post
                  .objects
                  .filter(author=author)
-                 .prefetch_related())
+                 .prefetch_related('author'))
     page_obj = paginator(request, post_list)
     return render(
         request,
@@ -50,7 +50,7 @@ def post_detail(request, post_id):
     post_list = (Post
                  .objects
                  .filter(author=post.author)
-                 .prefetch_related())
+                 .prefetch_related('author'))
     form = CommentForm(request.POST or None)
     comments = post.comments.all()
     return render(
@@ -120,7 +120,7 @@ def follow_index(request):
     post_list = (Post
                  .objects
                  .filter(author__following__user=request.user)
-                 .prefetch_related())
+                 .prefetch_related('author__following__user'))
     page_obj = paginator(request, post_list)
     return render(
         request,
