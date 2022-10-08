@@ -27,22 +27,35 @@ class PostUrlTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostUrlTests.user)
         self.url_status = {
-            '/': ('posts/index.html', HTTPStatus.OK),
-            '/group/first/': ('posts/group_list.html', HTTPStatus.OK),
-            '/profile/Name/': ('posts/profile.html', HTTPStatus.OK),
-            f'/posts/{self.post.pk}/': ('posts/post_detail.html',
+            '/': (
+                'posts/index.html',
                 HTTPStatus.OK
-                ),
-            f'/posts/{self.post.pk}/edit/': ('posts/create_post.html',
+            ),
+            '/group/first/': (
+                'posts/group_list.html',
+                HTTPStatus.OK
+            ),
+            '/profile/Name/': (
+                'posts/profile.html',
+                HTTPStatus.OK
+            ),
+            f'/posts/{self.post.pk}/': (
+                'posts/post_detail.html',
+                HTTPStatus.OK
+            ),
+            f'/posts/{self.post.pk}/edit/': (
+                'posts/create_post.html',
                 HTTPStatus.FOUND
-                ),
+            ),
             '/create/': ('posts/create_post.html', HTTPStatus.FOUND),
-            f'/profile/{self.user.username}/follow/': ('posts/follow.html',
+            f'/profile/{self.user.username}/follow/': (
+                'posts/follow.html',
                 HTTPStatus.FOUND
-                ),
-            f'/profile/{self.user.username}/unfollow/': ('posts/follow.html',
+            ),
+            f'/profile/{self.user.username}/unfollow/': (
+                'posts/follow.html',
                 HTTPStatus.FOUND
-                )
+            )
         }
 
     def test_urls_not_auth(self):
