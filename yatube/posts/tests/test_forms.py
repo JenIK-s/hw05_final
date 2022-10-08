@@ -27,7 +27,7 @@ class PostFormTests(TestCase):
             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
             b'\x0A\x00\x3B'
         )
-        uploaded = SimpleUploadedFile(
+        cls.uploaded = SimpleUploadedFile(
             name='small.gif',
             content=small_gif,
             content_type='image/gif'
@@ -42,7 +42,7 @@ class PostFormTests(TestCase):
             author=cls.user,
             text='Тестовый текст',
             group=cls.group,
-            image=uploaded
+            image=cls.uploaded
         )
 
     @classmethod
@@ -53,26 +53,14 @@ class PostFormTests(TestCase):
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostFormTests.user)
-        small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
-        self.uploaded = SimpleUploadedFile(
-            name='small.gif',
-            content=small_gif,
-            content_type='image/gif'
-        )
-
     def test_create_post(self):
         post_count = Post.objects.count()
+        post = Post.objects.latest('pk')
+        group = Group.objects.latest('pk')
         form_data = {
             'text': 'Тестовый текст',
             'group': PostFormTests.group.title,
-            'image': self.uploaded
+            'image': PostFormTests.post.image
         }
         response = self.authorized_client.post(
             reverse(
@@ -88,16 +76,17 @@ class PostFormTests(TestCase):
             )
         )
         self.assertEqual(Post.objects.count(), post_count + 1)
-        self.assertEqual(Post.objects.latest('pk').text, form_data['text'])
-        self.assertEqual(self.group.title, form_data['group'])
-        self.assertEqual(self.post.image, 'posts/small.gif')
+        self.assertEqual(post.text, form_data['text'])
+        self.assertEqual(group.title, form_data['group'])
+        self.assertEqual(post.image.name, 'posts/small.gif')
 
     def test_edit_post(self):
         post_count = Post.objects.count()
+        post = Post.objects.latest('pk')
+        group = Group.objects.latest('pk')
         form_data = {
             'text': 'Тестовый текст',
             'group': PostFormTests.group.title,
-            'image': self.uploaded
         }
         response = self.authorized_client.post(
             reverse(
@@ -110,9 +99,8 @@ class PostFormTests(TestCase):
             'posts:post_detail', kwargs={'post_id': PostFormTests.post.pk}
         ))
         self.assertEqual(Post.objects.count(), post_count)
-        self.assertEqual(Post.objects.latest('pk').text, form_data['text'])
-        self.assertEqual(self.group.title, form_data['group'])
-        self.assertEqual(self.post.image, 'posts/small.gif')
+        self.assertEqual(post.text, form_data['text'])
+        self.assertEqual(group.title, form_data['group'])
 
     def test_create_comment(self):
         comment_count = Comment.objects.count()
@@ -136,6 +124,6 @@ class PostFormTests(TestCase):
             )
         )
         self.assertEqual(Comment.objects.count(), comment_count + 1)
-        self.assertEqual(comment.text, form_data['text'])
-        self.assertEqual(comment.post, PostFormTests.post)
-        self.assertEqual(comment.author, PostFormTests.user)
+        self.assertEqual(Comment.objects.latest('pk').text, form_data['text'])
+        self.assertEqual(Comment.objects.latest('pk').post, PostFormTests.post)
+        self.assertEqual(Comment.objects.latest('pk').author, PostFormTests.user)

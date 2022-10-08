@@ -27,38 +27,40 @@ class PostUrlTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostUrlTests.user)
         self.url_status = {
-            '/': HTTPStatus.OK,
-            '/group/first/': HTTPStatus.OK,
-            '/profile/Name/': HTTPStatus.OK,
-            f'/posts/{self.post.pk}/': HTTPStatus.OK,
-            f'/posts/{self.post.pk}/edit/': HTTPStatus.FOUND,
-            '/create/': HTTPStatus.FOUND,
-            f'/profile/{self.user.username}/follow/': HTTPStatus.FOUND,
-            f'/profile/{self.user.username}/unfollow/': HTTPStatus.FOUND
+            '/': ('posts/index.html', HTTPStatus.OK),
+            '/group/first/': ('posts/group_list.html', HTTPStatus.OK),
+            '/profile/Name/': ('posts/profile.html', HTTPStatus.OK),
+            f'/posts/{self.post.pk}/': ( 'posts/post_detail.html', HTTPStatus.OK),
+            f'/posts/{self.post.pk}/edit/': ('posts/create_post.html', HTTPStatus.FOUND),
+            '/create/': ('posts/create_post.html', HTTPStatus.FOUND),
+            f'/profile/{self.user.username}/follow/': ('posts/follow.html',HTTPStatus.FOUND),
+            f'/profile/{self.user.username}/unfollow/': ('posts/follow.html', HTTPStatus.FOUND)
         }
-        self.link_tuple = (
-            'posts/index.html',
-            'posts/group_list.html',
-            'posts/profile.html',
-            'posts/post_detail.html',
-            'posts/create_post.html',
-            'posts/create_post.html',
-            'posts/follow.html',
-            'posts/follow.html',
-        )
 
     def test_urls_not_auth(self):
         for url, status_code in self.url_status.items():
             with self.subTest(url=url):
                 response = self.guest_client.get(url)
+                status_code = status_code[1]
                 self.assertEqual(response.status_code, status_code)
 
     def test_urls_auth(self):
-        url_status_auth = self.url_status
-        url_status_auth[f'/posts/{self.post.pk}/edit/'] = HTTPStatus.OK
-        url_status_auth['/create/'] = HTTPStatus.OK
-
-        for url, status_code in url_status_auth.items():
+        self.url_status[f'/posts/{self.post.pk}/edit/'] = ('posts/create_post.html', HTTPStatus.OK)
+        self.url_status['/create/'] = ('posts/create_post.html', HTTPStatus.OK)
+        for url, status_code in self.url_status.items():
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
+                status_code = status_code[1]
                 self.assertEqual(response.status_code, status_code)
+
+    def test_urls_uses_correct_template(self):
+        count = 0
+        for reverse_name, template in self.url_status.items():
+            if count == 6:
+                break
+            else:
+                count += 1
+                with self.subTest(reverse_name=reverse_name):
+                    response = self.authorized_client.get(reverse_name)
+                    template = template[0]
+                    self.assertTemplateUsed(response, template)
