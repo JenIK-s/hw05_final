@@ -53,6 +53,7 @@ class PostFormTests(TestCase):
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostFormTests.user)
+
     def test_create_post(self):
         post_count = Post.objects.count()
         post = Post.objects.latest('pk')
@@ -115,7 +116,6 @@ class PostFormTests(TestCase):
             data=form_data,
             follow=True
         )
-        comment = Comment.objects.first()
         self.assertRedirects(
             response,
             reverse(
@@ -126,4 +126,11 @@ class PostFormTests(TestCase):
         self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertEqual(Comment.objects.latest('pk').text, form_data['text'])
         self.assertEqual(Comment.objects.latest('pk').post, PostFormTests.post)
-        self.assertEqual(Comment.objects.latest('pk').author, PostFormTests.user)
+        self.assertEqual(
+            Comment.
+            objects.
+            latest('pk').
+            author,
+            PostFormTests.
+            user
+        )
