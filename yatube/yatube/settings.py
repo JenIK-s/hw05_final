@@ -31,10 +31,8 @@ SECRET_KEY = '%*@m(1vkfbk-gp9m7si=lt(q8m8@__&)k94dc2haj%0x+gmma@'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '[::1]',
-    'testserver',
+    'jeniks.pythonanywhere.com',
+    'www.jeniks.pythonanywhere.com'
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
